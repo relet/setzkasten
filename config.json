@@ -1,0 +1,12 @@
+{ "target": "/var/www/html/tiles",
+  "tilesize": 256,
+  "sources": [
+    ["test.png", 0, 1500, 13],
+    ["../rolling-focus/results/yo.jpg", 500, 0, 13],
+    ["../rolling-focus/results/raskebille2_clean.jpg", 500, 2000, 13]
+  ]
+}
+
+
+
+
