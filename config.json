@@ -1,10 +1,19 @@
-{ "target": "/var/www/html/tiles",
-  "tilesize": 256,
-  "sources": [
-    ["test.png", 0, 1500, 13],
-    ["../rolling-focus/results/yo.jpg", 500, 0, 13],
-    ["../rolling-focus/results/raskebille2_clean.jpg", 500, 2000, 13]
-  ]
+{
+    "target": "/var/www/html/tiles",
+    "tilesize": 256,
+    "maxzoom": 8,
+    "sources": [
+        ["../rolling-focus/results/2flue.png", 65000, 0, 13],
+        ["../rolling-focus/results/hormius.png", 65000, 60000, 13],
+        []
+    ],
+    "sources_disabled": [
+        ["text/title.png", 0, 0, 8],
+        ["../rolling-focus/results/rove_beetle.png", 47388, 30000, 13],
+        ["../rolling-focus/results/flue_take3.png", 45000, 0, 13],
+        ["../rolling-focus/results/homolobus.png", 22500, 30000, 12, "NOTE: REDUCED 50%"],
+        ["---"]
+    ]
 }
 
 

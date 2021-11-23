@@ -12,6 +12,7 @@
         padding: 0;
         width: 100%;
         height: 100%;
+        background: white;
     }
     </style>
 </head>
@@ -21,10 +22,11 @@
 
     <script type="text/javascript">
     var map = new L.Map('map');
-    map.setView([0,0],13.0);
+    var format = 'webp';
+    map.setView([0,0],4);
     //map.setView([59.7643618570158, 10.6545766085552], 15.0);  //centered around Nesodden
 
-    var tileURL = 'http://yogamat/tiles/{z}/{x}/{y}.jpg';
+    var tileURL = 'http://yogamat/tiles/{z}/{x}/{y}.'+format;
     var tileLayer = new L.TileLayer(tileURL);
     map.addLayer(tileLayer);
 
