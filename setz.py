@@ -7,6 +7,8 @@ import numpy as np
 import os
 import sys
 
+from geojson import FeatureCollection, Feature, Polygon, dumps
+
 config = json.load(open("config.json","r"))
 
 target = config.get('target')
@@ -15,24 +17,57 @@ maxzoom = config.get('maxzoom')
 
 tile_format = '.webp'
 
+LLBOUNDS = [-180.0, 180.0, -180.0, 180.0]
+
 # pixel coordinates as x,y
 # tile coordinates as t,u
 
-for source in config.get('sources',[]):
-    xrel, yrel, imgzoom = source[1:4]
+def xy_to_latlon(x,y,zoom):
+    max_x = -float(math.pow(2,zoom-1) * tilesize)
+    lat = x / max_x * LLBOUNDS[1]
+    max_y = float(math.pow(2,zoom-1) * tilesize)
+    lon = y / max_y * LLBOUNDS[3]
+    return lat,lon
 
-    source_im = cv.imread(source[0], cv.IMREAD_UNCHANGED)
+features = []
+
+for source in config.get('sources',[]):
+    if len(source)<7:
+        continue
+    filename, xrel, yrel, imgzoom, title, family, date, location, comment, href = source[:10]
+
+    print("Processing ",filename)
+    source_im = cv.imread(filename, cv.IMREAD_UNCHANGED)
+
+    # might be off by a factor off two, to be verified.
+    if title:
+        print(title)
+        w,h = source_im.shape[:2]
+        print("PIXEL COORDINATES ", xrel, yrel, xrel+w, yrel+h)
+        left, top = xy_to_latlon(xrel, yrel, imgzoom)
+        right, bottom = xy_to_latlon(xrel+w, yrel+h, imgzoom)
+        poly = Polygon([[(top, left), (top, right), (bottom, right), (bottom, left), (top, left)]])
+        feat = Feature(geometry=poly, properties = {
+            "title":   title,
+            "family":  family,
+            "date":    date,
+            "loc":     location,
+            "comment": comment,
+            "href":    href
+        })
+        features.append(feat)
+        print(dumps(FeatureCollection(features), indent=2))
+        #sys.exit(1)
+
     #if imgzoom < maxzoom:
     #    factor = math.pow(2, maxzoom-imgzoom)
     #    source_im = cv.resize(source_im, (0, 0), fx=factor, fy=factor)
     # FIXME: memory issues when blowing up - add maxzoom (and minzoom) to define display range
 
-    print(source)
-
     zoom = imgzoom
     w = h = 256 # just to pass the first check
 
-    while zoom > 1 and w > 1 and h > 2:
+    while zoom > 1 and w > 2 and h > 2:
       if zoom <= maxzoom:
 
         # relative zero (center) at the defined zoom level
@@ -67,9 +102,9 @@ for source in config.get('sources',[]):
         for tx in range(0, wt+1):  # TODO: try t0-t0+wt
             for ty in range(0, ht+1):
                 # read current background tile
-                folder   = target+"/"+str(zoom)+"/"+str(u0+ty)
+                folder   = target+"tiles/"+str(zoom)+"/"+str(u0+ty)
                 tile_url = folder +"/"+str(t0+tx)+tile_format
-                print("Loading "+tile_url)
+                #print("Loading "+tile_url)
 
                 white_tile = np.zeros([tilesize, tilesize, 4],dtype=np.uint8)
                 #white_tile.fill(255)
@@ -122,3 +157,8 @@ for source in config.get('sources',[]):
       source_im = cv.resize(source_im, (0, 0), fx=0.5, fy=0.5)
       w = math.floor(w / 2)
       h = math.floor(h / 2)
+
+fc = FeatureCollection(features)
+fp = open(target+"features.geojson", "w")
+fp.write(dumps(fc))
+fp.close()

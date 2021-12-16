@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Setzkasten</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -14,21 +14,119 @@
         height: 100%;
         background: white;
     }
+
+    .divTable{
+	display: table;
+	width: 100%;
+}
+.divTableRow {
+	display: table-row;
+}
+.divTableHeading {
+	background-color: #EEE;
+	display: table-header-group;
+}
+.divTableCell, .divTableHead {
+	border: 0px;
+	display: table-cell;
+}
+.divTableHeading {
+	background-color: #EEE;
+	display: table-header-group;
+	font-weight: bold;
+}
+.divTableFoot {
+	background-color: #EEE;
+	display: table-footer-group;
+	font-weight: bold;
+}
+.divTableBody {
+	display: table-row-group;
+}
+.divTableCaption {
+	display: table-caption;
+}
     </style>
 </head>
 
 <body>
     <div id="map"></div>
+    <script src="leaflet-hash.js">
+    </script>
+    <script src="leaflet-customscale.js">
+    </script>
+    <script src="leaflet.ajax.min.js">
+    </script>
 
     <script type="text/javascript">
+
     var map = new L.Map('map');
+
+    var onEachFeature_annotations = function (feature, layer) {
+/*                                 layer.on('mouseover', function() {
+                                     this.setStyle({
+                                       'weight': 1,
+                                     })});
+                                 layer.on('mouseout', function() {
+                                     this.setStyle({
+                                       'weight': 0,
+                                     })});
+*/
+                                 layer.bindPopup(`
+
+<div class="divTable">
+<div class="divTableBody">
+<div class="divTableRow">
+<div class="divTableCell">&nbsp;</div>
+<div class="divTableCell"><b>`+feature.properties['title']+`</b></div>
+</div>
+<div class="divTableRow">
+<div class="divTableCell"><b>Family:</b></div>
+<div class="divTableCell">`+feature.properties['family']+`</div>
+</div>
+<div class="divTableRow">
+<div class="divTableCell"><b>Date:</b></div>
+<div class="divTableCell">`+feature.properties['date']+`</div>
+</div>
+<div class="divTableRow">
+<div class="divTableCell"><b>Location:</b></div>
+<div class="divTableCell">`+feature.properties['loc']+`</div>
+</div>
+</div>
+</div>
+<div>&nbsp;</div>
+<div>`+feature.properties['comment']+`</div>
+<div>&nbsp;</div>
+<div><a href="`+feature.properties['href']+`">`+feature.properties['href']+`</a></div>
+`
+                                     );
+                                 layer.bindTooltip(feature.properties['title'], {sticky:true, offset:[10,20], direction:'right'});
+                                };
+
+
+    var style_annotations = function(feature) {
+                    return {
+                        "weight": 0,
+                        "color": "#bbb",
+                        'fillOpacity': 0
+                    }
+    };
+
     var format = 'webp';
-    map.setView([0,0],4);
-    //map.setView([59.7643618570158, 10.6545766085552], 15.0);  //centered around Nesodden
+    map.setView([-0.27,0.7],9);
 
     var tileURL = 'http://yogamat/tiles/{z}/{x}/{y}.'+format;
     var tileLayer = new L.TileLayer(tileURL);
     map.addLayer(tileLayer);
+
+    var url_annotations = 'http://yogamat/features.geojson';
+    var annotationsLayer = new L.GeoJSON.AJAX(url_annotations, { onEachFeature: onEachFeature_annotations, style: style_annotations});
+    map.addLayer(annotationsLayer);
+
+    var scale = L.control.customscale({maxWidth:400, imperial:false, factor:0.0012});
+    scale.addTo(map);
+
+    var hash = new L.Hash(map);
 
 </script>
 </body>
