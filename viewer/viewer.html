@@ -4,8 +4,15 @@
     <meta charset="UTF-8" />
     <title>Setzkasten</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="leaflet-search.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="leaflet-hash.js"></script>
+    <script src="leaflet-customscale.js"></script>
+    <script src="leaflet-search.min.js"></script>
+    <script src="leaflet.ajax.min.js"></script>
+    <script src="leaflet.tilelayer.fallback.js"></script>
     <style type="text/css">
     html, body, #map {
         margin: 0;
@@ -51,14 +58,6 @@
 
 <body>
     <div id="map"></div>
-    <script src="leaflet-hash.js">
-    </script>
-    <script src="leaflet-customscale.js">
-    </script>
-    <script src="leaflet.ajax.min.js">
-    </script>
-    <script src="leaflet.tilelayer.fallback.js">
-    </script>
 
     <script type="text/javascript">
 
@@ -128,7 +127,42 @@
     var scale = L.control.customscale({maxWidth:400, imperial:false, factor:0.0012});
     scale.addTo(map);
 
-    var hash = new L.Hash(map);
+    var zoomToSearchResult = function(text, latlng) {
+			var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+  			map.setView(latlng, zoom);
+            searchControl.options.buildTip = null;
+            return '<a href="#">'+text+'</a>';
+    };
+
+	var searchControl = new L.Control.Search({
+		layer: annotationsLayer,
+		propertyName: 'title',
+		marker: false,
+        initial: false,
+        textErr: "Name not found.",
+		moveToLocation: function(latlng, title, map) {
+			var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+  			map.setView(latlng, zoom);
+            window.location.hash = window.location.hash+'?'+encodeURI(title);
+		}
+	});
+
+	map.addControl( searchControl );  //inizialize search control
+
+    /* This allows us to zoom to any given location, updating the URL as we move */
+    new L.Hash(map);
+
+    /* This however, allows us to move directly to a search term. We enable this once, if a search term is provided. */
+    var hash=window.location.hash;
+    if (hash) {
+        var searchQuery = hash.split("?")[1];
+        if (searchQuery) {
+            searchControl.options.buildTip = zoomToSearchResult;
+            searchControl.searchText(decodeURI(searchQuery));
+        }
+    }
+
+
 
 </script>
 </body>
