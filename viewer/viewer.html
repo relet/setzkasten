@@ -11,7 +11,7 @@
         margin: 0;
         padding: 0;
         width: 100%;
-        height: 100%;
+        height: 99%;
         background: white;
     }
 
@@ -56,6 +56,8 @@
     <script src="leaflet-customscale.js">
     </script>
     <script src="leaflet.ajax.min.js">
+    </script>
+    <script src="leaflet.tilelayer.fallback.js">
     </script>
 
     <script type="text/javascript">
@@ -116,7 +118,7 @@
     map.setView([-0.27,0.7],9);
 
     var tileURL = 'http://yogamat/tiles/{z}/{x}/{y}.'+format;
-    var tileLayer = new L.TileLayer(tileURL);
+    var tileLayer = new L.tileLayer.fallback(tileURL, {'attribution': 'CC-BY Thomas Hirsch 2021 - <a href="relet.smugmug.com">Gallery</a>'});
     map.addLayer(tileLayer);
 
     var url_annotations = 'http://yogamat/features.geojson';
