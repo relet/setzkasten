@@ -116,16 +116,16 @@
     var format = 'webp';
     map.setView([-0.27,0.7],9);
 
-    var tileURL = 'http://yogamat/tiles/{z}/{x}/{y}.'+format;
-    var tileLayer = new L.tileLayer.fallback(tileURL, {'attribution': 'CC-BY Thomas Hirsch 2021 - <a href="relet.smugmug.com">Gallery</a>'});
-    map.addLayer(tileLayer);
+    var scale = L.control.customscale({maxWidth:400, imperial:false, factor:0.0012});
+    scale.addTo(map);
 
     var url_annotations = 'http://yogamat/features.geojson';
     var annotationsLayer = new L.GeoJSON.AJAX(url_annotations, { onEachFeature: onEachFeature_annotations, style: style_annotations});
     map.addLayer(annotationsLayer);
 
-    var scale = L.control.customscale({maxWidth:400, imperial:false, factor:0.0012});
-    scale.addTo(map);
+    var tileURL = 'http://yogamat/tiles/{z}/{x}/{y}.'+format;
+    var tileLayer = new L.tileLayer.fallback(tileURL, {'attribution': 'CC-BY Thomas Hirsch 2021 - <a href="relet.smugmug.com">Gallery</a>'});
+    map.addLayer(tileLayer);
 
     var zoomToSearchResult = function(text, latlng) {
 			var zoom = map.getBoundsZoom(latlng.layer.getBounds());
@@ -134,7 +134,7 @@
             return '<a href="#">'+text+'</a>';
     };
 
-	var searchControl = new L.Control.Search({
+    var searchControl = new L.Control.Search({
 		layer: annotationsLayer,
 		propertyName: 'title',
 		marker: false,
@@ -147,22 +147,23 @@
 		}
 	});
 
-	map.addControl( searchControl );  //inizialize search control
+    /* consult search indexes only when all features are loaded */
+    annotationsLayer.on("data:loaded",function() {
+        map.addControl( searchControl );  //inizialize search control
 
-    /* This allows us to zoom to any given location, updating the URL as we move */
-    new L.Hash(map);
+        /* This allows us to zoom to any given location, updating the URL as we move */
+        new L.Hash(map);
 
-    /* This however, allows us to move directly to a search term. We enable this once, if a search term is provided. */
-    var hash=window.location.hash;
-    if (hash) {
-        var searchQuery = hash.split("?")[1];
-        if (searchQuery) {
-            searchControl.options.buildTip = zoomToSearchResult;
-            searchControl.searchText(decodeURI(searchQuery));
+        /* This however, allows us to move directly to a search term. We enable this once, if a search term is provided. */
+        var hash=window.location.hash;
+        if (hash) {
+            var searchQuery = hash.split("?")[1];
+            if (searchQuery) {
+                searchControl.options.buildTip = zoomToSearchResult;
+                searchControl.searchText(decodeURI(searchQuery));
+            }
         }
-    }
-
-
+    });
 
 </script>
 </body>
