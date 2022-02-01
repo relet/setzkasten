@@ -19,6 +19,10 @@ tile_format = '.webp'
 
 LLBOUNDS = [-180.0, 180.0, -180.0, 180.0]
 
+match = None
+if len(sys.argv)>=2:
+    match = sys.argv[1]
+
 # pixel coordinates as x,y
 # tile coordinates as t,u
 
@@ -64,6 +68,9 @@ for source in config.get('sources',[]):
     #    source_im = cv.resize(source_im, (0, 0), fx=factor, fy=factor)
     # FIXME: memory issues when blowing up - add maxzoom (and minzoom) to define display range
 
+    if match and not match in filename:
+        continue
+
     zoom = imgzoom
     w = h = 256 # just to pass the first check
 
@@ -99,6 +106,7 @@ for source in config.get('sources',[]):
         off_u = math.floor(off_y / tilesize)
 
         # CHECK: adjust range to actually cover the location of the translated image
+        folders={}
         for tx in range(0, wt+1):  # TODO: try t0-t0+wt
             for ty in range(0, ht+1):
                 # read current background tile
@@ -144,10 +152,12 @@ for source in config.get('sources',[]):
                     #sys.exit(1)
 
                 # then write that tile to file
-                print("Writing ",tile_url)
-                try:
+                if not folder in folders:
+                  print("Writing ",folder)
+                  try:
                     os.makedirs(folder)
-                except:
+                    folders[folder]=True
+                  except:
                     pass
                 cv.imwrite(tile_url, bg)
 

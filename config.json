@@ -3,25 +3,38 @@
     "tilesize": 256,
     "maxzoom": 14,
     "sources": [
-        ["species/arachnida/ixodes_ricinus.png", 65000, 210000, 18, "Ixodes ricinus - European Deer Tick", "Mites and Ticks", "2021-09-09", "Nesodden, NO - indoors", "", "https://www.inaturalist.org/observations/94265950"],
-        ["species/isopoda/hyloniscus_riparius.png", 65000, 180000, 18, "Hyloniscus riparius", "Woodlice and Pill bugs", "2021-10-26", "Nesodden, NO - under rocks", "", "https://www.inaturalist.org/observations/99475880"],
-        ["species/diptera/lipoptena_cervi.png", 100000, 17500, 18, "Lipoptena cervi - Deer Fly", "Louse flies", "2021-09-05", "Nesodden, NO - indoors, frequent", "", "https://www.inaturalist.org/observations/93778846"],
-        []
-    ],
-    "sources_disabled": [
-        ["text/title.png", 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0],
-        ["text/inmygarden.png", 1300, 250, 13, 0, 0, 0, 0, 0, 0, 0 ,0],
+        ["text/title_traced.png", 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0],
+        ["text/inmygarden_traced.png", 2600, 500, 14, 0, 0, 0, 0, 0, 0, 0 ,0],
 
         ["species/diptera/helina_sp.png", 60000, 10000, 18, "Helina sp.", "Muscoid flies", "2021-11-08", "Nesodden, NO - indoors", "", "https://www.inaturalist.org/observations/100548827"],
         ["species/diptera/suillia_sp.png", 80000, 10000, 18, "Suillia sp.", "Heleomyzidae", "<date>", "Nesodden, NO - indoors", "", "https://www.inaturalist.org/observations/101294347"],
+        ["species/diptera/lipoptena_cervi.png", 100000, 17500, 18, "Lipoptena cervi - Deer Fly", "Louse flies", "2021-09-05", "Nesodden, NO - indoors, frequent", "", "https://www.inaturalist.org/observations/93778846"],
+
         ["species/coleoptera/quedius_sp.png", 65000, 35000, 18, "Quedius maurus/mesomelinus", "Rove beetles", "2021-10-20", "Nesodden, NO - indoors", "All species found were also affected by an <a href='https://www.inaturalist.org/observations/101393773'>insect destroying fungal infection</a> on the antennae.", "https://www.inaturalist.org/observations/98904286"],
+
         ["species/hymenoptera/homolobus_infumator.png", 30000, 30000, 17, "Homolobus infumator", "Braconid wasps", "2021-11-02", "Nesodden, NO - attracted by light", "", "https://www.inaturalist.org/observations/100089758", "NOTE: REDUCED 50%"],
         ["species/hymenoptera/hormius_moniliatus.png", 80000, 60000, 18, "Hormius moniliatus", "Braconid wasps", "2021-11-18", "Nesodden, NO - attracted by light", "", "https://www.inaturalist.org/observations/101416068"],
+
         ["species/lepidoptera/alucita_hexadactyla.png", 62000, 80000, 18, "Alucita hexadactyla - Twenty-plume moth", "Finger moths", "2021-10-19", "Nesodden, NO - attracted by light", "", "https://www.inaturalist.org/observations/97686297"],
         ["species/lepidoptera/emmelina_monodactyla.png", 40000, 40000, 17, "Emmelina monodactyla - T-moth", "Finger moths", "2021-10-16", "Nesodden, NO - attracted by light", "", "https://www.inaturalist.org/observations/98555259"],
+        ["species/lepidoptera/caloptilia_stigmatella.png", 104000, 103000, 18, "Caloptilia stigmatella", "Leafminer moths", "2022-01-23", "Nesodden, NO - found indoors", "", "https://www.inaturalist.org/observations/105023444"],
+        ["species/lepidoptera/gelechioidea_sp.png", 120000, 110000, 18, "Gelechioidea sp.", "Curved-horn moths", "2021-12-22", "Nesodden, NO - found indoors", "Still have to figure out this one", "https://www.inaturalist.org/observations/103492177"],
+
         ["species/lepidoptera/carpatolechia_decorella.png", 62000, 105000, 18, "Carpatolechia decorella", "Twirler moths", "2021-10-16", "Nesodden, NO - attracted by light", "", "https://www.inaturalist.org/observations/98368447"],
-        ["species/neuroptera/chrysoperla_carnea.png", 31000, 62500, 17, "Chrysoperla carnea (complex)", "Green Lacewings", "2021-10-18", "Nesodden, NO - indoors", "", "https://www.inaturalist.org/observations/98733949"],
         ["species/lepidoptera/acrocercops_brogniardella.png", 40000, 54250, 17, "Acrocercops brogniardella - Brown Oak Slender", "Leaf blotch miner moths", "2021-09-28", "Nesodden, NO - attracted by light, frequent", "", "https://www.inaturalist.org/observations/96469237"],
+
+        ["species/neuroptera/chrysoperla_carnea.png", 31000, 62500, 17, "Chrysoperla carnea (complex)", "Green Lacewings", "2021-10-18", "Nesodden, NO - indoors", "", "https://www.inaturalist.org/observations/98733949"],
+
+        ["species/isopoda/hyloniscus_riparius.png", 65000, 180000, 18, "Hyloniscus riparius", "Woodlice and Pill bugs", "2021-10-26", "Nesodden, NO - under rocks", "", "https://www.inaturalist.org/observations/99475880"],
+
+        ["species/arachnida/ixodes_ricinus.png", 65000, 210000, 18, "Ixodes ricinus - European Deer Tick", "Mites and Ticks", "2021-09-09", "Nesodden, NO - indoors", "", "https://www.inaturalist.org/observations/94265950"],
+
+        ["species/collembola/entomobrya_nivalis.png", 130000, 480000, 19, "Entomobrya nivalis - Cosmopolitan Springtail", "Springtails", "2022-01-27", "Nesodden, NO - yellow pan trap", "", "https://www.inaturalist.org/observations/105719953"],
+
+	[]
+    ],
+    "sources_disabled": [
+
         []
     ]
 }
