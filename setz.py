@@ -6,6 +6,7 @@ import math
 import numpy as np
 import os
 import sys
+from requests.utils import requote_uri
 
 from geojson import FeatureCollection, Feature, Polygon, dumps
 
@@ -14,6 +15,7 @@ config = json.load(open("config.json","r"))
 target = config.get('target')
 tilesize = config.get('tilesize')
 maxzoom = config.get('maxzoom')
+spacing = config.get('spacing')
 
 tile_format = '.webp'
 
@@ -34,19 +36,35 @@ def xy_to_latlon(x,y,zoom):
     return lat,lon
 
 features = []
+prev_x, prev_y, prev_zoom = None,None,None
 
 for source in config.get('sources',[]):
     if len(source)<7:
         continue
     filename, xrel, yrel, imgzoom, title, family, date, location, comment, href = source[:10]
 
+    # auto-place after spacing
+    if xrel=="+":
+        xrel = prev_x + int((2**imgzoom) * spacing)
+        xrel = xrel * (2**(imgzoom-prev_zoom))
+        print("CALCULATED NEW X FROM", prev_x, " AS ", xrel)
+    if yrel=="+":
+        yrel = prev_y + int((2**imgzoom) * spacing)
+        yrel = yrel * (2**(imgzoom-prev_zoom))
+        print("CALCULATED NEW Y FROM", prev_y, " AS ", yrel)
+
     print("Processing ",filename)
     source_im = cv.imread(filename, cv.IMREAD_UNCHANGED)
+    w,h = source_im.shape[:2]
+
+    # auto-place centered 
+    if yrel=="=":
+        yrel = prev_yc * (2**(imgzoom-prev_zoom)) - int(h/2)
+        print("CALCULATED NEW Y FROM CENTER", prev_yc, " AS ", yrel)
 
     # might be off by a factor off two, to be verified.
     if title:
         print(title)
-        w,h = source_im.shape[:2]
         print("PIXEL COORDINATES ", xrel, yrel, xrel+w, yrel+h)
         left, top = xy_to_latlon(xrel, yrel, imgzoom)
         right, bottom = xy_to_latlon(xrel+w, yrel+h, imgzoom)
@@ -60,13 +78,16 @@ for source in config.get('sources',[]):
             "href":    href
         })
         features.append(feat)
-        print(dumps(FeatureCollection(features), indent=2))
-        #sys.exit(1)
 
     #if imgzoom < maxzoom:
     #    factor = math.pow(2, maxzoom-imgzoom)
     #    source_im = cv.resize(source_im, (0, 0), fx=factor, fy=factor)
     # FIXME: memory issues when blowing up - add maxzoom (and minzoom) to define display range
+    # calculate outer borders of previous item to calculate relative positions
+    prev_x = xrel + w
+    prev_y = yrel + h
+    prev_yc = yrel + h/2
+    prev_zoom = imgzoom
 
     if match and not match in filename:
         continue
@@ -172,3 +193,12 @@ fc = FeatureCollection(features)
 fp = open(target+"features.geojson", "w")
 fp.write(dumps(fc))
 fp.close()
+
+def species_link(s):
+  return '<li><a href="https://setzkasten.relet.net#?{}">{}</a></li>'.format(requote_uri(s),s)
+
+species_list=map(lambda f:f.properties.get('title'), features)
+species_links = "\n".join(map(species_link, sorted(species_list)))
+fi = open(target+"species_index.html", "w")
+fi.write("<html><body><ul>{}<ul></body><html>".format(species_links))
+fi.close()
