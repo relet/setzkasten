@@ -36,7 +36,8 @@ def xy_to_latlon(x,y,zoom):
     return lat,lon
 
 features = []
-prev_x, prev_y, prev_zoom = None,None,None
+prev_x, prev_y, prev_zoom = None, None, None
+ymax = -1e10
 
 for source in config.get('sources',[]):
     if len(source)<7:
@@ -57,10 +58,16 @@ for source in config.get('sources',[]):
     source_im = cv.imread(filename, cv.IMREAD_UNCHANGED)
     w,h = source_im.shape[:2]
 
-    # auto-place centered 
+    # auto-place centered
     if yrel=="=":
         yrel = prev_yc * (2**(imgzoom-prev_zoom)) - int(h/2)
         print("CALCULATED NEW Y FROM CENTER", prev_yc, " AS ", yrel)
+    # auto-place right of previous column
+    elif yrel==">":
+        yrel = (ymax + 1.0/100) * (2**imgzoom)
+        print("CALCULATED NEW Y FROM YMAX", ymax, " AS ", yrel, imgzoom)
+    else:
+        ymax = yrel
 
     # might be off by a factor off two, to be verified.
     if title:
@@ -87,6 +94,10 @@ for source in config.get('sources',[]):
     prev_x = xrel + w
     prev_y = yrel + h
     prev_yc = yrel + h/2
+    prev_yr = float(yrel + h) / (2**imgzoom)
+    if prev_yr > ymax:
+        ymax = prev_yr
+        print("NEW YMAX ", ymax, "FROM", yrel, h)
     prev_zoom = imgzoom
 
     if match and not match in filename:
@@ -174,7 +185,7 @@ for source in config.get('sources',[]):
 
                 # then write that tile to file
                 if not folder in folders:
-                  print("Writing ",folder)
+                  #print("Writing ",folder)
                   try:
                     os.makedirs(folder)
                     folders[folder]=True
